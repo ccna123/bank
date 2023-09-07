@@ -1,0 +1,58 @@
+{
+  "transactions": [
+    {
+      "id": 1,
+      "content": "Buy house",
+      "type": "spending",
+      "price": 128
+    },
+    {
+      "id": 2,
+      "content": "Salary",
+      "type": "income",
+      "price": 300
+    },
+    {
+      "id": 3,
+      "content": "Food",
+      "type": "spending",
+      "price": 12
+    },
+    {
+      "id": 4,
+      "content": "Gas",
+      "type": "spending",
+      "price": 20
+    },
+    {
+      "id": "a176a63b-e8fd-46f5-99df-bf0c164d2bf8",
+      "content": "bonus",
+      "type": "income",
+      "price": 600
+    },
+    {
+      "id": "e2c66503-e111-48f5-9b2d-2a646bdb6310",
+      "content": "TO WATER INCOR",
+      "type": "spending",
+      "price": 29.4
+    },
+    {
+      "id": "1c99f9fb-c547-4d4c-8a6c-099546e048fe",
+      "content": "TO ELECTRICITY COM",
+      "type": "spending",
+      "price": 120
+    },
+    {
+      "id": "39e199d1-da44-40f4-a2f3-25d56dd871ba",
+      "content": "TO VALOR",
+      "type": "spending",
+      "price": 45
+    },
+    {
+      "id": "be2d7810-80f0-4ea1-9bb3-63b11a25a647",
+      "content": "SALARY",
+      "type": "income",
+      "price": 150
+    }
+  ]
+}
