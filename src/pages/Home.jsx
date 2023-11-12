@@ -101,9 +101,6 @@ export const Home = () => {
           <sup className="text-4xl">$</sup>
           <p className="text-6xl">{balance.toLocaleString()}</p>
         </div>
-        {/* <div className="w-[40%] absolute right-0 ">
-      <PieChart maxIncome={maxIncome} maxSpending={maxSpending} />
-    </div> */}
       </section>
 
       <section className="mb-4">
