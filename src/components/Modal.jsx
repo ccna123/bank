@@ -1,27 +1,34 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
-import { addTransaction } from "../redux/expenseSlice";
+import axios from "axios";
 
-export const Modal = ({ handleToggleModal }) => {
+export const Modal = ({ handleToggleModal, setTransactions }) => {
   const [content, setContent] = useState("");
-  const [price, setPrice] = useState(0);
+  const [amount, setAmount] = useState(0);
   const [type, setType] = useState("income");
-  const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleCloseModal = () => {
     handleToggleModal();
   };
-  const handleAdd = () => {
+  const handleAdd = async () => {
     const newTransaction = {
-      id: uuidv4(),
       content,
       type,
-      price,
+      amount,
+      id: user.id,
     };
-    dispatch(addTransaction(newTransaction));
+    try {
+      const res = await axios.post("http://localhost:4000/addTransaction", {
+        newTransaction,
+      });
+      setTransactions((prev) => {
+        return [...prev, res.data];
+      });
+    } catch (error) {
+      console.log(error);
+    }
     setContent("");
-    setPrice(0);
+    setAmount(0);
     setType("income");
   };
   return (
@@ -41,10 +48,10 @@ export const Modal = ({ handleToggleModal }) => {
           className="w-full border-2 border-blue-300 focus:outline-none p-2 rounded-lg"
         />
         <input
-          onChange={(e) => setPrice(parseFloat(e.target.value))}
+          onChange={(e) => setAmount(parseFloat(e.target.value))}
           type="number"
           min={1}
-          value={price}
+          value={amount}
           className="w-full border-2 my-5 border-blue-300 focus:outline-none p-2 rounded-lg"
         />
         <select

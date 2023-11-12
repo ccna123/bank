@@ -29,7 +29,10 @@ export const Card = ({
               title === "Daily Income" ? "text-green-500" : "text-red-500"
             }`}
           >
-            $ {title === "Daily Income" ? totalIncome : totalSpending}
+            ${" "}
+            {title === "Daily Income"
+              ? totalIncome.toLocaleString()
+              : totalSpending.toLocaleString()}
           </p>
         </div>
       </div>

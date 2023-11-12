@@ -15,7 +15,7 @@ export const Transaction = ({ content, cost, type }) => {
           </div>
         </div>
         <p className="font-bold text-lg">
-          {type === "income" ? "+" : "-"}${Math.abs(cost)}
+          {type === "income" ? "+" : "-"}${Math.abs(cost).toLocaleString()}
         </p>
       </div>
       <hr />

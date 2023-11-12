@@ -1,35 +1,42 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { fetchTransactions } from "../redux/expenseSlice";
 import { Card } from "../components/Card";
 import { Transaction } from "../components/Transaction";
 import { Modal } from "../components/Modal";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Home = () => {
   const [showModal, setShowModal] = useState(false);
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [balance, setBalance] = useState(0);
   const [maxSpending, setMaxSpending] = useState(0);
   const [maxIncome, setMaxIncome] = useState(0);
   const [income, setIncome] = useState(0);
   const [spending, setSpending] = useState(0);
+  const [transactions, setTransactions] = useState([]);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleToggleModal = () => {
     setShowModal(!showModal);
   };
 
-  const transactions = useSelector((state) => state.expense.transactions);
   useEffect(() => {
-    dispatch(fetchTransactions());
-  }, []);
+    const fetchTransactions = async () => {
+      const res = await axios.get(
+        `http://localhost:4000/getTransactions/${user.id}`
+      );
+      setTransactions(res.data);
+    };
+    fetchTransactions();
+  }, [transactions.length]);
 
   useEffect(() => {
     let totalBalance = 0;
     transactions.forEach((t) => {
       if (t.type === "spending") {
-        totalBalance -= t.price;
+        totalBalance -= parseFloat(t.amount);
       } else {
-        totalBalance += t.price;
+        totalBalance += parseFloat(t.amount);
       }
       setBalance(totalBalance);
     });
@@ -38,7 +45,7 @@ export const Home = () => {
   useEffect(() => {
     const totalSpending = transactions.reduce((total, t) => {
       if (t.type === "spending") {
-        return total + t.price;
+        return total + parseFloat(t.amount);
       } else {
         return total;
       }
@@ -47,7 +54,7 @@ export const Home = () => {
 
     const totalIncome = transactions.reduce((total, t) => {
       if (t.type === "income") {
-        return total + t.price;
+        return total + parseFloat(t.amount);
       } else {
         return total;
       }
@@ -56,29 +63,43 @@ export const Home = () => {
 
     const spendingArray = transactions
       .filter((t) => t.type === "spending")
-      .map((t) => t.price);
+      .map((t) => parseFloat(t.amount));
     setMaxSpending(
       (Math.max(...spendingArray) / totalSpending).toFixed(1) * 100
     );
     const incomeArray = transactions
       .filter((t) => t.type === "income")
-      .map((t) => t.price);
+      .map((t) => parseFloat(t.amount));
     setMaxIncome((Math.max(...incomeArray) / totalIncome).toFixed(1) * 100);
   }, [transactions]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  };
   return (
-    <div className="bg-white rounded-md shadow-lg p-4 md:w-[40%]">
+    <div className="bg-white rounded-md shadow-lg p-4 md:w-[80%]">
       <header className="App-header flex justify-between items-center mt-5">
         <div className="flex items-center gap-4">
           <i className="fa-solid fa-sack-dollar text-white bg-green-500 rounded-full p-3"></i>
           <p>MONFLOW</p>
         </div>
-        <i className="fa-solid fa-user fa-xl text-orange-400 cursor-pointer"></i>
+        <div className="flex items-center gap-2">
+          <p>{user?.name}</p>
+          <i className="fa-solid fa-user fa-xl text-orange-400 cursor-pointer"></i>
+          <p
+            onClick={handleLogout}
+            className="text-blue-500 hover:underline cursor-pointer"
+          >
+            Log out
+          </p>
+        </div>
       </header>
 
       <section className="flex justify-between items-center my-10 relative">
         <div className="flex items-center">
           <sup className="text-4xl">$</sup>
-          <p className="text-6xl">{balance}</p>
+          <p className="text-6xl">{balance.toLocaleString()}</p>
         </div>
         {/* <div className="w-[40%] absolute right-0 ">
       <PieChart maxIncome={maxIncome} maxSpending={maxSpending} />
@@ -107,8 +128,14 @@ export const Home = () => {
         </div>
       </section>
 
-      <section className="my-4">
+      <section className="my-4 flex items-center gap-4">
         <p className="text-xl">Transactions History</p>
+        <Link
+          to={`/detail/${user.id}`}
+          className="text-xl text-blue-500 hover:underline cursor-pointer"
+        >
+          View Detail
+        </Link>
       </section>
 
       <section className="mb-6">
@@ -118,7 +145,7 @@ export const Home = () => {
               <Transaction
                 key={t.id}
                 content={t.content}
-                cost={t.price}
+                cost={parseFloat(t.amount)}
                 type={t.type}
               />
             ))}
@@ -133,7 +160,12 @@ export const Home = () => {
           ></i>
         </div>
       </section>
-      {showModal && <Modal handleToggleModal={handleToggleModal} />}
+      {showModal && (
+        <Modal
+          handleToggleModal={handleToggleModal}
+          setTransactions={setTransactions}
+        />
+      )}
     </div>
   );
 };
